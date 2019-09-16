@@ -1,33 +1,76 @@
-import React, { useEffect, useState } from "react";
-import axios from 'axios';
-import CharacterCard from './CharacterCard'
+import React, { useEffect, useState } from "react"
+import Axios from "axios"
+import Loader from "react-loader-spinner"
+import styled from "styled-components"
+import CharacterCard from "./CharacterCard"
+import PageButton from "./PageButton"
 
+const Header = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`
 export default function CharacterList(props) {
-  const [char, newChar] =useState([])
-
+  const [pages, setPages] = useState([])
+  const [currentPage, setCurrentPage] = useState(1)
+  const [characters, setCharacters] = useState([])  
+  const [maxpage, setMaxpage] = useState(1)
+   
   useEffect(() => {
-    axios.get('https://rickandmortyapi.com/api/character/')
-    .then (res => {
-      console.log(res.data.results)
-        newChar(res.data.results)
+    let exists = false
+    pages.forEach((page) => {
+      currentPage === page && (exists = true)
     })
-    .catch (err => 
-      console.log(err)
-      );
-  }, []);
+    if (!exists) {
+      Axios.get(
+        `https://rickandmortyapi.com/api/character/?page=${currentPage}`
+      )
+        .then((res) => {
+          setMaxpage(res.data.info.pages)
+          setCharacters((list) => [
+            ...list,
+            {
+              next: res.data.info.next,
+              previous: res.data.info.previous,
+              maxpage: res.data.info.pages,
+              results: res.data.results
+            }
+          ])
+        })
+        .catch((err) => console.log(err))
+    }
+  }, [currentPage])
 
   return (
     <section className="character-list grid-view">
-       <h2>
-      {char.map((char, index) => 
-        <CharacterCard 
-          image= {char.image}
-          name= {char.name}
-          species= {char.species}
-          gender= {char.gender}
-          status= {char.status}
-      />)} 
-      </h2>
+      <Header>
+        <h2>Current Page: {currentPage}</h2>
+        <div>
+          <PageButton
+            direction="previous"
+            currentPage={currentPage}
+            setCurrentPage={setCurrentPage}
+          />
+          <PageButton
+            direction="next"
+            currentPage={currentPage}
+            setCurrentPage={setCurrentPage}
+            maxpage={maxpage}
+          />
+        </div>
+      </Header>
+      <div className="grid-view">
+        {characters[currentPage - 1] && characters[currentPage - 1].results ? (
+          characters[currentPage - 1].results.map((character, index) => {
+            return <CharacterCard key={index} character={character} />
+          })
+        ) : (
+          <div className="grid-view">
+            <Loader type="Puff" color="gray" height={300} width={300} />
+          </div>
+        )}
+      </div>
     </section>
   );
 }

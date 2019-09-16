@@ -7,32 +7,29 @@ import PageButton from "./PageButton"
 
 
 const Header = styled.div`
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 `
-  
-export default function CharacterList() {
 
-    const [pages, setPages] = useState([])
-    const [currentPage, setCurrentPage] = useState(1)
-    const [characters, setCharacters] = useState([])  
-    const [maxpage, setMaxpage] = useState(1)
-  
-  
-   useEffect(() => {
+export default function LocationList() {
+  const [pages, setPages] = useState([])
+  const [currentPage, setCurrentPage] = useState(1)
+  const [locations, setLocations] = useState([])
+  const [maxpage, setMaxpage] = useState(1)
+
+
+  useEffect(() => {
     let exists = false
     pages.forEach((page) => {
       currentPage === page && (exists = true)
     })
     if (!exists) {
-      Axios.get(
-        `https://rickandmortyapi.com/api/character/?page=${currentPage}`
-      )
+      Axios.get(`https://rickandmortyapi.com/api/location/?page=${currentPage}`)
         .then((res) => {
           setMaxpage(res.data.info.pages)
-          setCharacters((list) => [
+          setLocations((list) => [
             ...list,
             {
               next: res.data.info.next,
@@ -44,10 +41,10 @@ export default function CharacterList() {
         })
         .catch((err) => console.log(err))
     }
-  }, [currentPage])    
-  
+  }, [currentPage])
+
   return (
-    <section className="character-list grid-view">
+    <section className="locations-list grid-view">
       <Header>
         <h2>Current Page: {currentPage}</h2>
         <div>
@@ -60,14 +57,14 @@ export default function CharacterList() {
             direction="next"
             currentPage={currentPage}
             setCurrentPage={setCurrentPage}
-            maxpage={maxpage}
+            maxpage= {maxpage}
           />
         </div>
       </Header>
       <div className="grid-view">
-        {characters[currentPage - 1] && characters[currentPage - 1].results ? (
-          characters[currentPage - 1].results.map((character, index) => {
-            return <CharacterCard key={index} character={character} />
+        {locations[currentPage - 1] && locations[currentPage - 1].results ? (
+          locations[currentPage - 1].results.map((location, index) => {
+            return <LocationCard key={index} location={location}/>
           })
         ) : (
           <div className="grid-view">
@@ -76,5 +73,5 @@ export default function CharacterList() {
         )}
       </div>
     </section>
-  );
+  )
 }

@@ -38,5 +38,5 @@ export default function CharacterCard({ character }) {
           character.location.name}
       </Body>
     </Style>
-  );
+  )
 }
