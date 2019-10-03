@@ -9,7 +9,6 @@ const Style = styled.div`
   margin: 1rem;
   img {
     width: 100%;
-    border-bottom: 1px solid black;
   }
 `
 const Title = styled.div`
@@ -25,17 +24,14 @@ const Body = styled.div`
   border-radius: 0 0 5px 5px;
 `
 
-export default function CharacterCard({ character }) {
+export default function EpisodeCard({ episode }) {
   return (
     <Style>
-      <Title>{character.name}</Title>
-      <img src={character.image} alt={character.name} />
+      <Title>{episode.name}</Title>
       <Body>
-        {character.species +
-          " " +
-          character.status +
-          " " +
-          character.location.name}
+        {episode.air_date + " " + episode.episode}
+        <br />
+        {" Number of Characters:" + episode.characters.length}
       </Body>
     </Style>
   )

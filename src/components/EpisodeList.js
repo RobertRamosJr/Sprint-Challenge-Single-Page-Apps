@@ -2,9 +2,8 @@ import React, { useEffect, useState } from "react"
 import Axios from "axios"
 import Loader from "react-loader-spinner"
 import styled from "styled-components"
-import LocationCard from "./LocationCard"
-import PageButton from "./PageButton"   
-
+import EpisodeCard from "./EpisodeCard"
+import PageButton from "./PageButton"
 
 const Header = styled.div`
   width: 100%;
@@ -13,12 +12,11 @@ const Header = styled.div`
   align-items: center;
 `
 
-export default function LocationList() {
+export default function EpisodeList() {
   const [pages, setPages] = useState([])
   const [currentPage, setCurrentPage] = useState(1)
-  const [locations, setLocations] = useState([])
+  const [episodes, setEpisodes] = useState([])
   const [maxpage, setMaxpage] = useState(1)
-
 
   useEffect(() => {
     let exists = false
@@ -26,15 +24,14 @@ export default function LocationList() {
       currentPage === page && (exists = true)
     })
     if (!exists) {
-      Axios.get(`https://rickandmortyapi.com/api/location/?page=${currentPage}`)
+      Axios.get(`https://rickandmortyapi.com/api/episode/?page=${currentPage}`)
         .then((res) => {
           setMaxpage(res.data.info.pages)
-          setLocations((list) => [
+          setEpisodes((list) => [
             ...list,
             {
               next: res.data.info.next,
               previous: res.data.info.previous,
-              maxpage: res.data.info.pages,
               results: res.data.results
             }
           ])
@@ -44,7 +41,7 @@ export default function LocationList() {
   }, [currentPage])
 
   return (
-    <section className="locations-list grid-view">
+    <section className="episode-list grid-view">
       <Header>
         <h2>Current Page: {currentPage}</h2>
         <div>
@@ -57,14 +54,14 @@ export default function LocationList() {
             direction="next"
             currentPage={currentPage}
             setCurrentPage={setCurrentPage}
-            maxpage= {maxpage}
+            maxpage={maxpage}
           />
         </div>
       </Header>
       <div className="grid-view">
-        {locations[currentPage - 1] && locations[currentPage - 1].results ? (
-          locations[currentPage - 1].results.map((location, index) => {
-            return <LocationCard key={index} location={location}/>
+        {episodes[currentPage - 1] && episodes[currentPage - 1].results ? (
+          episodes[currentPage - 1].results.map((episode, index) => {
+            return <EpisodeCard key={index} episode={episode} />
           })
         ) : (
           <div className="grid-view">
